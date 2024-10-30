@@ -75,7 +75,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
 	return (
 		<AlertContext.Provider value={{ addAlert, removeAlert }}>
 			{children}
-			<div className="alert-stack gap-3 flex flex-col absolute top-0 right-0 h-full w-full pointer-events-none justify-start py-5 items-end">
+			<div className="alert-stack">
 				{alerts.map((alert) => (
 					<Alert
 						key={alert.id}

@@ -8,10 +8,13 @@ export default function Playground() {
 
   const handleTriggerAlert = () => {
     addAlert({
-      title: 'New Alert',
-      body: 'This is a new alert triggered externally.',
+      title: '',
+      body: '',
       state: 'danger',
       // hasTimer: false,
+      // hasBody: false,
+      // hasTitle: false,
+      // hasAction: false,
       duration: 5000,
       onClick: () => {
         console.log('yeet');
