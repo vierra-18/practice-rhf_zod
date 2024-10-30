@@ -56,19 +56,26 @@ export function AlertProvider({ children }: { children: ReactNode }) {
 		setNextId((prevId) => prevId + 1);
 	};
 
+	const REMOVE_DELAY = 500; // Adjust this delay to match your CSS animation timing
+
 	const removeAlert = (id: number) => {
-		// Instead of removing, we set isVisible to false
+		// Step 1: Set the alert as inactive for animation
 		setAlerts((prevAlerts) =>
 			prevAlerts.map((alert) =>
 				alert.id === id ? { ...alert, isVisible: false } : alert
 			)
 		);
+
+		// Step 2: Schedule removal from the DOM
+		setTimeout(() => {
+			setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== id));
+		}, REMOVE_DELAY); // Ensure this matches the exit animation duration
 	};
 
 	return (
 		<AlertContext.Provider value={{ addAlert, removeAlert }}>
 			{children}
-			<div className="alert-stack show-guide absolute w-screen h-screen">
+			<div className="alert-stack gap-3 flex flex-col absolute top-0 right-0 h-full w-full pointer-events-none justify-start py-5 items-end">
 				{alerts.map((alert) => (
 					<Alert
 						key={alert.id}

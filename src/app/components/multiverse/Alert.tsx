@@ -76,11 +76,11 @@ export default function Alert({
 	});
 
 	return (
-		<motion.dialog
+		<motion.div
 			initial={{ x: "100%", opacity: 0 }}
 			animate={isActive ? { x: 0, opacity: 1 } : { x: "100%", opacity: 0 }}
 			transition={{ type: "spring", duration: 1, bounce: 0.25 }}
-			className="alert"
+			className="alert-container"
 		>
 			<div className="alert-box ">
 				<div className=" flex justify-between">
@@ -158,6 +158,6 @@ export default function Alert({
 					/>
 				</div>
 			</div>
-		</motion.dialog>
+		</motion.div>
 	);
 }
