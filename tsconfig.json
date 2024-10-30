@@ -25,16 +25,19 @@
       "@/*": [
         "./src/*"
       ],
-      "@hooks/*": [
-        "./src/app/hooks/*"
+      "@/hooks/*": [
+        "./src/app/utilities/hooks/*"
       ],
-      "@lib/types/*": [
-        "./src/app/lib/types/*"
+      "@/types/*": [
+        "./src/app/utilities/lib/types/*"
       ],
-      "@lib/schemas/*": [
-        "./src/app/lib/schemas/*"
+      "@/schemas/*": [
+        "./src/app/utilities/lib/schemas/*"
       ],
-      "@components/*": [
+      "@/helpers/*": [
+        "./src/app/utilities/helpers/*"
+      ],
+      "@/components/*": [
         "./src/app/components/*"
       ]
     }

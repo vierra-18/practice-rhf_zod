@@ -1,14 +1,16 @@
 // import Image from "next/image";
-import TodoList from "./components/TodoList";
+import Dashboard from './components/layout/Dashboard';
+// import NoteList from "./components/NoteList";
 
 export default function Home() {
-	return (
-		<div className="bg-gray-800 w-screen h-screen">
-			<main className="grid place-items-center w-full h-full">
-				<div className="h-full container flex flex-col justify-center items-center -2">
-					<TodoList/>
-				</div>
-			</main>
-		</div>
-	);
+  return (
+    <div className="min-h-screen max-w-screen bg-zinc-800">
+      <main className="grid h-full w-full place-items-center">
+        <div className="container flex h-full flex-col items-center justify-center ">
+          {/* <Sidebar /> */}
+          <Dashboard />
+        </div>
+      </main>
+    </div>
+  );
 }

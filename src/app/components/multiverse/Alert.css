@@ -1,0 +1,38 @@
+:root:has(:is(.modal-open)) {
+	overflow: hidden;
+	scrollbar-gutter: stable;
+}
+.alert {
+
+	@apply flex justify-end fixed  top-0 h-full max-h-none 
+  w-full max-w-none items-start text p-0  pointer-events-none bg-transparent 
+   border-none;
+}
+:where(.alert) {
+	@apply items-center;
+}
+
+.alert-box {
+	/* box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px; */
+	box-shadow: 0px 11px 20px 3px rgba(0, 0, 0, 0.75);
+	@apply p-4 relative rounded bg-interface overscroll-contain overflow-y-auto 
+  max-w-[25rem] w-11/12 mt-5 mr-2 max-h-32 !pointer-events-auto z-[999];
+}
+
+@keyframes scaleDown {
+	0% {
+		transform: scaleX(1);
+	}
+	100% {
+		transform: scaleX(0);
+	}
+}
+
+.alert span.timer.isAnimating {
+	transform-origin: left;
+	animation: scaleDown var(--animation-duration, 0.5s) forwards; /* Use CSS variable for duration */
+}
+.alert span.timer {
+	transform-origin: left;
+	@apply scale-x-0;
+}

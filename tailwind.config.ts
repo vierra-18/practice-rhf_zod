@@ -509,7 +509,8 @@ const config: Config = {
       };
       addUtilities(newUtilities, ["responsive", "hover"]);
     },
-    twContainerQueries
+    twContainerQueries,
+    require('daisyui'),
   ],
 };
 export default config;
