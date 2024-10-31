@@ -21,7 +21,7 @@ type AlertData = {
 	title?: string;
 	body?: string;
 	duration?: number; // in milliseconds
-	state?: "danger" | "warning" | "success";
+	intent?: "danger" | "warning" | "success";
 	hasTitle?: boolean;
 	hasBody?: boolean;
 	hasTimer?: boolean;
@@ -46,17 +46,39 @@ export function useAlert() {
 	return context;
 }
 
-export function AlertProvider({ children }: { children: ReactNode }) {
+interface AlertProviderProps {
+	children: ReactNode;
+	maxAlerts?: number;
+}
+
+export function AlertProvider({ children, maxAlerts = 5 }: AlertProviderProps) {
 	const [alerts, setAlerts] = useState<AlertData[]>([]);
 	const [nextId, setNextId] = useState(1);
+	const REMOVE_DELAY = 500;
 
 	const addAlert = (alert: Omit<AlertData, "id">) => {
-		const newAlert = { ...alert, id: nextId, isVisible: true }; // Set isVisible to true when adding
-		setAlerts((prevAlerts) => [...prevAlerts, newAlert]);
+		setAlerts((prevAlerts) => {
+			const updatedAlerts = [...prevAlerts];
+
+			// Identify excess alerts and mark them as not visible
+			const excessCount = updatedAlerts.length - maxAlerts + 1;
+			if (excessCount > 0) {
+				// Mark the oldest `excessCount` alerts as `isVisible: false`
+				updatedAlerts.slice(0, excessCount).forEach((oldAlert) => {
+					oldAlert.isVisible = false;
+					setTimeout(() => {
+						setAlerts((alerts) => alerts.filter((a) => a.id !== oldAlert.id));
+					}, REMOVE_DELAY);
+				});
+			}
+
+			// Add the new alert with isVisible set to true
+			const newAlert = { ...alert, id: nextId, isVisible: true };
+			return [...updatedAlerts, newAlert];
+		});
+
 		setNextId((prevId) => prevId + 1);
 	};
-
-	const REMOVE_DELAY = 500; // Adjust this delay to match your CSS animation timing
 
 	const removeAlert = (id: number) => {
 		// Step 1: Set the alert as inactive for animation
@@ -82,7 +104,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
 						icon={alert.icon}
 						title={alert.title}
 						body={alert.body}
-						state={alert.state}
+						intent={alert.intent}
 						duration={alert.duration}
 						actionLabel={alert.actionLabel}
 						hasTitle={alert.hasTitle}

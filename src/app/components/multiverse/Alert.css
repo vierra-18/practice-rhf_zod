@@ -5,12 +5,12 @@
 
 .alert-box {
 	@apply p-4 relative rounded bg-interface overscroll-contain overflow-y-auto 
-  max-w-[25rem] w-11/12  max-h-32 !pointer-events-auto z-[999] shadow-md;
+  max-w-[25rem] w-11/12  max-h-32 !pointer-events-auto z-[999] shadow-md ;
 }
 
 .alert-stack {
-	@apply gap-3 flex flex-col absolute top-0 right-0 h-full w-full 
-  pointer-events-none justify-start py-5 items-end;
+	@apply gap-3 flex flex-col-reverse absolute top-0 right-0 h-full w-full 
+  pointer-events-none justify-end py-5 items-end;
 }
 
 @keyframes scaleDown {

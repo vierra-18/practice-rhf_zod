@@ -1,8 +1,7 @@
-import React, { useEffect, type ReactElement } from "react";
+import React, { ComponentProps, useEffect, type ReactElement } from "react";
 import type { IconType } from "react-icons";
 import { RiInformationFill } from "react-icons/ri";
 import { IoClose } from "react-icons/io5";
-
 import { motion } from "framer-motion";
 
 import { cn } from "@/app/utilities/lib/utilities";
@@ -10,6 +9,7 @@ import { cn } from "@/app/utilities/lib/utilities";
 import Button from "./Button";
 
 import "./Alert.css";
+
 type Icon = IconType | ReactElement;
 
 type AlertProps = {
@@ -17,8 +17,8 @@ type AlertProps = {
 	icon?: Icon;
 	title?: string;
 	body?: string;
-	duration?: number; //in milliseconds
-	state?: "default" | "danger" | "warning" | "success";
+	duration?: number;
+	intent?: "default" | "danger" | "warning" | "success";
 	hasTitle?: boolean;
 	hasBody?: boolean;
 	hasTimer?: boolean;
@@ -28,6 +28,32 @@ type AlertProps = {
 	onClick?: () => void;
 	onClose: () => void;
 };
+
+// Extract the ButtonProps intent type using ComponentProps
+type ButtonIntent = Exclude<ComponentProps<typeof Button>["intent"], undefined>;
+
+// Mapping for intent and background based on alert intent
+
+const MAP_INTENT: Record<ButtonIntent, string> = {
+	default: "-brand",
+	primary: "-primary",
+	info: "-info",
+	success: "-success",
+	warning: "-warning",
+	danger: "-danger",
+	inverse: "-inverse",
+};
+
+// Timestamp component
+function Timestamp() {
+	const currentTime = new Date().toLocaleTimeString([], {
+		hour: "numeric",
+		minute: "2-digit",
+		hour12: true,
+	});
+	return <p className="text-white-900">Today {currentTime}</p>;
+}
+
 export default function Alert({
 	isActive = false,
 	onClose,
@@ -36,7 +62,7 @@ export default function Alert({
 	title,
 	body,
 	duration = 10_000,
-	state = "default",
+	intent = "default",
 	hasTitle = true,
 	hasBody = true,
 	hasTimer = true,
@@ -45,12 +71,8 @@ export default function Alert({
 	actionLabel,
 }: AlertProps) {
 	const renderIcon = (Icon: Icon) => {
-		if (React.isValidElement(Icon)) {
-			return Icon;
-		}
-		if (typeof Icon === "function") {
-			return <Icon />;
-		}
+		if (React.isValidElement(Icon)) return Icon;
+		if (typeof Icon === "function") return <Icon />;
 		return null;
 	};
 
@@ -59,21 +81,14 @@ export default function Alert({
 
 		if (isActive && hasTimer) {
 			timer = setTimeout(() => {
-				onClose(); // Close the alert after duration
+				onClose();
 			}, duration);
 		}
 
-		// Cleanup function to clear the timeout
 		return () => {
 			if (timer) clearTimeout(timer);
 		};
-	}, [isActive, duration, onClose, hasTimer]);
-
-	const currentTime = new Date().toLocaleTimeString([], {
-		hour: "numeric",
-		minute: "2-digit",
-		hour12: true,
-	});
+	}, [isActive, duration, hasTimer]);
 
 	return (
 		<motion.div
@@ -82,8 +97,8 @@ export default function Alert({
 			transition={{ type: "spring", duration: 1, bounce: 0.25 }}
 			className="alert-container"
 		>
-			<div className="alert-box ">
-				<div className=" flex justify-between">
+			<div className="alert-box">
+				<div className="flex justify-between">
 					<Button
 						className="absolute top-1 right-2 border-none bg-transparent"
 						onClick={onClose}
@@ -93,13 +108,7 @@ export default function Alert({
 					<div
 						className={cn(
 							"flex items-start justify-center",
-							state === "danger"
-								? "text-danger"
-								: state === "warning"
-								? "text-warning"
-								: state === "success"
-								? "text-success"
-								: "text-brand"
+							"text" + MAP_INTENT[intent] || "text" + MAP_INTENT.default
 						)}
 					>
 						{renderIcon(icon || RiInformationFill)}
@@ -107,18 +116,15 @@ export default function Alert({
 					<div className="flex flex-1 flex-col gap-y-2 px-4 text-xs">
 						{hasTitle && (
 							<h1 className="font-bold capitalize">
-								{title || "notification title"}
+								{title || "Notification Title"}
 							</h1>
 						)}
 						{hasBody && (
 							<p className="text-white-900">
-								{body ||
-									"This should be a brief copy to convey system feedback"}
+								{body || "Brief feedback message"}
 							</p>
 						)}
-						{hasTimestamp && (
-							<p className="text-white-900">Today {currentTime.slice(0)}</p>
-						)}
+						{hasTimestamp && <Timestamp />}
 					</div>
 					{hasAction && (
 						<Button
@@ -126,17 +132,9 @@ export default function Alert({
 							variant="solid"
 							size="small"
 							className="self-center justify-self-center capitalize"
-							intent={
-								state === "danger"
-									? "danger"
-									: state === "warning"
-									? "warning"
-									: state === "success"
-									? "success"
-									: "primary"
-							}
+							intent={intent} // Maps intent directly
 						>
-							{actionLabel || "button"}
+							{actionLabel || "Button"}
 						</Button>
 					)}
 					<span
@@ -146,13 +144,7 @@ export default function Alert({
 						}
 						className={cn(
 							"timer absolute bottom-0 left-0 h-1 w-full",
-							state === "danger"
-								? "bg-danger"
-								: state === "warning"
-								? "bg-warning"
-								: state === "success"
-								? "bg-success"
-								: "bg-brand",
+							"bg" + MAP_INTENT[intent] || "bg" + MAP_INTENT.default,
 							isActive && hasTimer && "isAnimating"
 						)}
 					/>

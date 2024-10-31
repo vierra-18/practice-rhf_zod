@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={' antialiased '}>
-        <AlertProvider>{children}</AlertProvider>
+        <AlertProvider maxAlerts={4}>{children}</AlertProvider>
       </body>
     </html>
   );
