@@ -96,6 +96,7 @@ export default function Alert({
 			animate={isActive ? { x: 0, opacity: 1 } : { x: "100%", opacity: 0 }}
 			transition={{ type: "spring", duration: 1, bounce: 0.25 }}
 			className="alert-container"
+			layout
 		>
 			<div className="alert-box">
 				<div className="flex justify-between">
@@ -113,30 +114,33 @@ export default function Alert({
 					>
 						{renderIcon(icon || RiInformationFill)}
 					</div>
-					<div className="flex flex-1 flex-col gap-y-2 px-4 text-xs">
-						{hasTitle && (
-							<h1 className="font-bold capitalize">
-								{title || "Notification Title"}
-							</h1>
+					<div className="flex flex-1 justify-between">
+						<div className="flex flex-1 flex-col gap-y-2 px-4 text-xs ">
+							{hasTitle && (
+								<h1 className="font-bold capitalize">
+									{title || "Notification Title"}
+								</h1>
+							)}
+							{hasBody && (
+								<p className="text-white-900">
+									{body || "Brief feedback message"}
+								</p>
+							)}
+							{hasTimestamp && <Timestamp />}
+						</div>
+						{hasAction && (
+							<Button
+								onClick={onClick}
+								variant="solid"
+								size="small"
+								className="self-center justify-self-center capitalize mr-6"
+								intent={intent} // Maps intent directly
+							>
+								{actionLabel || "Button"}
+							</Button>
 						)}
-						{hasBody && (
-							<p className="text-white-900">
-								{body || "Brief feedback message"}
-							</p>
-						)}
-						{hasTimestamp && <Timestamp />}
 					</div>
-					{hasAction && (
-						<Button
-							onClick={onClick}
-							variant="solid"
-							size="small"
-							className="self-center justify-self-center capitalize"
-							intent={intent} // Maps intent directly
-						>
-							{actionLabel || "Button"}
-						</Button>
-					)}
+
 					<span
 						key={isActive && hasTimer ? "active" : "inactive"}
 						style={

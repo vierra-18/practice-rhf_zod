@@ -23,16 +23,14 @@ type Props<
       label: string | ((value: NoInfer<TValue>) => string);
       description?: string | ((value: NoInfer<TValue>) => string);
       contained?: boolean;
-      leading?: boolean;
-      trailing?: boolean;
+      switchPosition?: 'trailing' | 'leading';
     }
   | {
       // Omit properties only when label is not present
       label?: never;
       description?: never;
       contained?: never;
-      leading?: never;
-      trailing?: never;
+      switchPosition?: never;
     }
 ) &
   Omit<ComponentPropsWithoutRef<typeof FormFieldWrapper>, 'children' | 'label'>;
@@ -49,15 +47,14 @@ const FormSwitch = <const TOnValue, const TOffValue>({
   label,
   description,
   contained = false,
-  leading = true,
-  trailing = false,
+  switchPosition = 'leading',
   error,
   noError = false,
   errorDescription,
 }: Props<TOnValue, TOffValue>) => {
   const onValue = onV ?? true;
   const offValue = offV ?? false;
-  const switchLayout = trailing ? false : leading;
+  const isLeading = switchPosition === 'leading';
 
   return (
     <FormFieldWrapper
@@ -73,10 +70,10 @@ const FormSwitch = <const TOnValue, const TOffValue>({
           'flex items-center',
           label && 'w-72 p-3',
           label && contained && 'rounded border border-white-100 bg-interface',
-          !switchLayout && 'flex-row-reverse justify-between'
+          !isLeading && 'flex-row-reverse justify-between'
         )}
       >
-        <div className={cn('toggle-switch', switchLayout && label && 'mr-4')}>
+        <div className={cn('toggle-switch', isLeading && label && 'mr-4')}>
           <input
             id={`id-${name}`}
             data-test-id={testId}
@@ -88,9 +85,13 @@ const FormSwitch = <const TOnValue, const TOffValue>({
           <label htmlFor={`id-${name}`} />
         </div>
         {label && (
-          <div className='text flex flex-col gap-1'>
+          <div className="flex flex-col gap-1 text">
             <Text className="font-bold capitalize">{label?.toString()}</Text>
-            <Text className="opacity-70">{description?.toString() || ''}</Text>
+            {description && (
+              <Text className="opacity-70">
+                {description?.toString() || ''}
+              </Text>
+            )}
           </div>
         )}
       </div>

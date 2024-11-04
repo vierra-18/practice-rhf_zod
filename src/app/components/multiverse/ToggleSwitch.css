@@ -1,5 +1,5 @@
 .toggle-switch {
-  @apply relative h-7 w-[2.725rem];
+  @apply relative h-7 w-[2.75rem];
   & > input[type='checkbox'] {
     @apply hidden;
   }

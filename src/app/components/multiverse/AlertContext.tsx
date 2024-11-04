@@ -12,6 +12,7 @@ import { RiInformationFill } from "react-icons/ri";
 import Alert from "./Alert";
 
 import "./Alert.css";
+import { AnimatePresence } from "framer-motion";
 
 type Icon = IconType | ReactElement;
 
@@ -97,27 +98,29 @@ export function AlertProvider({ children, maxAlerts = 5 }: AlertProviderProps) {
 	return (
 		<AlertContext.Provider value={{ addAlert, removeAlert }}>
 			{children}
-			<div className="alert-stack">
-				{alerts.map((alert) => (
-					<Alert
-						key={alert.id}
-						icon={alert.icon}
-						title={alert.title}
-						body={alert.body}
-						intent={alert.intent}
-						duration={alert.duration}
-						actionLabel={alert.actionLabel}
-						hasTitle={alert.hasTitle}
-						hasBody={alert.hasBody}
-						hasTimer={alert.hasTimer}
-						hasTimestamp={alert.hasTimestamp}
-						hasAction={alert.hasAction}
-						isActive={alert.isVisible} // Use isVisible to control animation
-						onClose={() => removeAlert(alert.id)} // Keep the same remove function
-						onClick={alert.onClick}
-					/>
-				))}
-			</div>
+			<AnimatePresence>
+				<div className="alert-stack">
+					{alerts.map((alert) => (
+						<Alert
+							key={alert.id}
+							icon={alert.icon}
+							title={alert.title}
+							body={alert.body}
+							intent={alert.intent}
+							duration={alert.duration}
+							actionLabel={alert.actionLabel}
+							hasTitle={alert.hasTitle}
+							hasBody={alert.hasBody}
+							hasTimer={alert.hasTimer}
+							hasTimestamp={alert.hasTimestamp}
+							hasAction={alert.hasAction}
+							isActive={alert.isVisible}
+							onClose={() => removeAlert(alert.id)}
+							onClick={alert.onClick}
+						/>
+					))}
+				</div>
+			</AnimatePresence>
 		</AlertContext.Provider>
 	);
 }
