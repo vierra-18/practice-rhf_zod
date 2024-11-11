@@ -1,32 +1,32 @@
 .alert-container {
-	@apply flex  justify-end !px-4 items-center text 
-  !m-0 !p-0 w-full pointer-events-none bg-transparent border-none;
+  @apply pointer-events-none  !m-0 flex w-full items-center 
+  justify-end border-none bg-transparent !p-0 !px-4 text;
 }
 
 .alert-box {
-	@apply p-4 relative rounded bg-interface overscroll-contain overflow-y-auto 
-  max-w-[25rem] w-11/12  max-h-32 !pointer-events-auto z-[999] shadow-md ;
+  @apply !pointer-events-auto relative z-[999] w-11/12 max-w-[25rem] overflow-y-auto 
+  overscroll-contain rounded  bg-interface p-4 shadow-md md:max-h-32;
 }
 
 .alert-stack {
-	@apply gap-3 flex flex-col-reverse absolute top-0 right-0 h-full w-full 
-  pointer-events-none justify-end py-5 items-end;
+  @apply pointer-events-none absolute right-0 top-0 flex h-full w-full flex-col-reverse 
+  items-end justify-end gap-3 py-5;
 }
 
 @keyframes scaleDown {
-	0% {
-		transform: scaleX(1);
-	}
-	100% {
-		transform: scaleX(0);
-	}
+  0% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+  }
 }
 
 .alert-container span.timer.isAnimating {
-	transform-origin: left;
-	animation: scaleDown var(--animation-duration, 0.5s) forwards; /* Use CSS variable for duration */
+  transform-origin: left;
+  animation: scaleDown var(--animation-duration, 0.5s) forwards; /* Use CSS variable for duration */
 }
 .alert-container span.timer {
-	transform-origin: left;
-	@apply scale-x-0;
+  transform-origin: left;
+  @apply scale-x-0;
 }

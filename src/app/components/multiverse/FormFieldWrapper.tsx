@@ -32,7 +32,7 @@ const FormFieldWrapper = ({
 			{(label || optional) && (
 				<label
 					htmlFor={name}
-					className="flex w-full justify-between text-xs font-medium leading-[0.875rem] text-subtle"
+					className="flex w-full justify-between font-medium text-subtle text-xs leading-[0.875rem]"
 				>
 					<span>{label}</span>
 					{optional && (

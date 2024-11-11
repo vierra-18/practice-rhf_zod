@@ -1,7 +1,7 @@
 export default function Topbar() {
 	return (
-		<div className=" flex flex-col h-16 w-full self-start border-b border-r px-6 justify-center  uppercase">
-			top bar mo to
+		<div className=" flex h-16 w-full flex-col justify-center self-start border-black border-r border-b px-6 text-black uppercase">
+			playground{" "}
 		</div>
 	);
 }

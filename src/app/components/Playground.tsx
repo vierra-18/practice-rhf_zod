@@ -1,100 +1,119 @@
 "use client";
 
 import { useState } from "react";
-import { useAlert } from "./multiverse/AlertContext";
-import FormSwitch from "./multiverse/FormSwitch";
+import { IoSave } from "react-icons/io5";
+import { useAlert } from "./multiverse/Alert";
+import Button from "./multiverse/Button";
+import Modal from "./multiverse/Modal";
 
 export default function Playground() {
-	const [switchValue, setSwitchValue] = useState(false); // Initial value can be true or false
+	const [isModalVisible, setModalVisible] = useState(false);
 
 	const { addAlert } = useAlert();
 
 	const handleTriggerDangerAlert = () => {
 		addAlert({
-			title: "",
-			body: "",
+			title: "Danger alert",
+			body: "This is a danger alert",
 			intent: "danger",
-			// hasTimer: false,
-			// hasBody: false,
-			// hasTitle: false,
-			// hasAction: false,
-			duration: 5000,
-			onClick: () => {},
+			actionLabel: "yeet",
+			duration: 1_000_000,
 		});
 	};
 	const handleTriggerSuccessAlert = () => {
 		addAlert({
-			title: "",
-			body: "",
+			title: "Success alert",
+			body: "This is a success alert",
 			intent: "success",
-			// hasTimer: false,
-			// hasBody: false,
-			// hasTitle: false,
-			// hasAction: false,
-			duration: 5000,
-			onClick: () => {},
+			duration: 1_000_000,
 		});
 	};
 	const handleTriggerWarningAlert = () => {
 		addAlert({
-			title: "warning alert",
-			body: "this is the body of the warning alert",
+			title: "Warning alert",
+			body: "This is a warning alert",
 			intent: "warning",
-			// hasTimer: false,
-			hasTimestamp: false,
-			// hasBody: false,
-			// hasTitle: false,
-			// hasAction: false,
-			duration: 5000,
-			onClick: () => {},
+		});
+	};
+	const handleTriggerAlert = () => {
+		addAlert({
+			title: "Default alert",
+			body: "This is a default alert",
+			duration: 1_000_000,
 		});
 	};
 	return (
-		<div className="flex flex-wrap gap-5 rounded p-5">
-			<button
+		<div className="flex flex-col flex-wrap gap-5 rounded p-5">
+			<Button
 				type="button"
-				className="btn capitalize"
+				className=" capitalize"
 				onClick={handleTriggerDangerAlert}
+				variant="solid"
+				intent="danger"
 			>
 				danger alert
-			</button>
-			<button
+			</Button>
+			<Button
 				type="button"
-				className="btn capitalize"
+				className=" capitalize"
 				onClick={handleTriggerSuccessAlert}
+				variant="solid"
+				intent="success"
 			>
 				success alert
-			</button>
-			<button
+			</Button>
+			<Button
 				type="button"
-				className="btn capitalize"
+				className=" capitalize"
 				onClick={handleTriggerWarningAlert}
+				variant="solid"
+				intent="warning"
 			>
 				warning alert
-			</button>
-			{/* <Alert
-        title=""
-        body=""
-        state="danger"
-        isActive={isModalOpen}
-        actionLabel=""
-        onClose={() => setIsModalOpen(false)}
-        icon={RiInformationFill}
-        onClick={() => {
-          setIsModalOpen(false);
-        }}
-      /> */}
-			<div className="w-full">
-				<FormSwitch
-					name="exampleSwitch" // Unique name for the switch
-					value={switchValue} // Controlled value
-					onChange={setSwitchValue} // Handler for value changes
-					label="Toggle Feature" // Label displayed next to the switch
-					// description="Enable or disable the feature." // Optional description
-					contained // Optional prop for styling
-					switchPosition="trailing"
-				/>{" "}
-			</div>
+			</Button>
+			<Button
+				type="button"
+				className=" capitalize"
+				onClick={handleTriggerAlert}
+				variant="outline"
+			>
+				default alert
+			</Button>
+			<Button
+				type="button"
+				className=" capitalize"
+				onClick={() => setModalVisible(true)}
+				variant="solid"
+				intent="info"
+			>
+				open modal
+			</Button>
+			<Modal
+				isVisible={isModalVisible}
+				onClose={() => setModalVisible(false)}
+				// title="Modal Title"
+				intent="success"
+				size="exlarge"
+			>
+				<div className="flex flex-col gap-5">
+					<p>
+						Lorem ipsum dolor sit amet consectetur adipisicing elit. In, fugiat
+						praesentium iste enim rerum iusto. Laborum beatae alias laudantium
+						pariatur facilis ipsam dicta deleniti voluptas quod veniam quasi at
+						sequi quae ea tenetur earum eius assumenda, quis accusantium cum
+						nesciunt ratione? Provident fuga obcaecati ullam eveniet suscipit
+						quae porro quo!
+					</p>{" "}
+					<p>
+						Lorem ipsum dolor sit amet consectetur adipisicing elit. In, fugiat
+						praesentium iste enim rerum iusto. Laborum beatae alias laudantium
+						pariatur facilis ipsam dicta deleniti voluptas quod veniam quasi at
+						sequi quae ea tenetur earum eius assumenda, quis accusantium cum
+						nesciunt ratione? Provident fuga obcaecati ullam eveniet suscipit
+						quae porro quo!
+					</p>
+				</div>
+			</Modal>
 		</div>
 	);
 }

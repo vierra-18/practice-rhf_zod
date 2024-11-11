@@ -1,11 +1,11 @@
-import React from "react";
-import Lottie from "lottie-react";
-import { type ReactElement } from "react";
-import { type IconType } from "react-icons";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
+import Lottie from "lottie-react";
+import React from "react";
+import type { ReactElement } from "react";
+import type { IconType } from "react-icons";
 
-import { cn } from "../../utilities/lib/utilities";
+import { cn } from "./../../lib/utilities";
 
 import Text from "./Text";
 

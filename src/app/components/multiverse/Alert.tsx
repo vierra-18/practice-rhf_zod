@@ -1,16 +1,31 @@
-import React, { ComponentProps, useEffect, type ReactElement } from "react";
-import type { IconType } from "react-icons";
-import { RiInformationFill } from "react-icons/ri";
-import { IoClose } from "react-icons/io5";
-import { motion } from "framer-motion";
+"use client";
 
-import { cn } from "@/app/utilities/lib/utilities";
+import { AnimatePresence, motion } from "framer-motion";
+import React, {
+	useEffect,
+	createContext,
+	useContext,
+	useState,
+	useRef,
+	useCallback,
+	type ReactElement,
+	type ReactNode,
+	type ComponentProps,
+} from "react";
+import type { IconType } from "react-icons";
+import { IoClose } from "react-icons/io5";
+import { RiInformationFill } from "react-icons/ri";
+
+import { cn } from "./../../lib/utilities";
 
 import Button from "./Button";
+import Text from "./Text";
 
 import "./Alert.css";
 
 type Icon = IconType | ReactElement;
+
+type Intent = Exclude<ComponentProps<typeof Button>["intent"], undefined>;
 
 type AlertProps = {
 	isActive?: boolean;
@@ -18,40 +33,133 @@ type AlertProps = {
 	title?: string;
 	body?: string;
 	duration?: number;
-	intent?: "default" | "danger" | "warning" | "success";
-	hasTitle?: boolean;
-	hasBody?: boolean;
-	hasTimer?: boolean;
+	intent?: Intent;
 	hasTimestamp?: boolean;
 	hasAction?: boolean;
 	actionLabel?: string;
 	onClick?: () => void;
-	onClose: () => void;
+	onClose?: () => void;
 };
 
-// Extract the ButtonProps intent type using ComponentProps
-type ButtonIntent = Exclude<ComponentProps<typeof Button>["intent"], undefined>;
+type AlertData = AlertProps & { id: number; isVisible?: boolean };
 
-// Mapping for intent and background based on alert intent
-
-const MAP_INTENT: Record<ButtonIntent, string> = {
-	default: "-brand",
-	primary: "-primary",
-	info: "-info",
-	success: "-success",
-	warning: "-warning",
-	danger: "-danger",
-	inverse: "-inverse",
+type AlertContextType = {
+	addAlert: (alert: Omit<AlertData, "id">) => void;
+	removeAlert: (id: number) => void;
 };
 
-// Timestamp component
+const AlertContext = createContext<AlertContextType | undefined>(undefined);
+
+export function useAlert() {
+	const context = useContext(AlertContext);
+	if (!context)
+		throw new Error("useAlert must be used within an AlertProvider");
+	return context;
+}
+
+interface AlertProviderProps {
+	children: ReactNode;
+	maxAlerts?: number;
+}
+
+export function AlertProvider({ children, maxAlerts = 5 }: AlertProviderProps) {
+	const [alerts, setAlerts] = useState<AlertData[]>([]);
+	const [nextId, setNextId] = useState(1);
+	const REMOVE_DELAY = 100;
+
+	const addAlert = useCallback(
+		(alert: Omit<AlertData, "id">) => {
+			setAlerts((prevAlerts) => {
+				const updatedAlerts = [...prevAlerts];
+				const excessCount = updatedAlerts.length - maxAlerts + 1;
+
+				if (excessCount > 0) {
+					for (const oldAlert of updatedAlerts.slice(0, excessCount)) {
+						oldAlert.isVisible = false;
+						setTimeout(() => {
+							setAlerts((alerts) => alerts.filter((a) => a.id !== oldAlert.id));
+						}, REMOVE_DELAY);
+					}
+				}
+
+				const newAlert = { ...alert, id: nextId, isVisible: true };
+				return [...updatedAlerts, newAlert];
+			});
+
+			setNextId((prevId) => prevId + 1);
+		},
+		[maxAlerts, nextId, setAlerts]
+	);
+
+	const removeAlert = useCallback(
+		(id: number) => {
+			setAlerts((prevAlerts) =>
+				prevAlerts.map((alert) =>
+					alert.id === id ? { ...alert, isVisible: false } : alert
+				)
+			);
+			setTimeout(() => {
+				setAlerts((prevAlerts) =>
+					prevAlerts.filter((alert) => alert.id !== id)
+				);
+			}, REMOVE_DELAY);
+		},
+		[setAlerts]
+	);
+
+	return (
+		<AlertContext.Provider value={{ addAlert, removeAlert }}>
+			{children}
+			<AnimatePresence>
+				<div className="alert-stack">
+					{alerts.map((alert) => (
+						<Alert
+							key={alert.id}
+							{...alert}
+							isActive={alert.isVisible}
+							onClose={() => {
+								alert.onClose?.();
+								removeAlert(alert.id);
+							}}
+						/>
+					))}
+				</div>
+			</AnimatePresence>
+		</AlertContext.Provider>
+	);
+}
+
+const MAP_ICON_COLOR_CLASS: Record<Intent, string> = {
+	default: "text-[--black-700]",
+	primary: "text-brand",
+	info: "text-info",
+	success: "text-success",
+	warning: "text-warning",
+	danger: "text-danger",
+	inverse: "text-inverse",
+};
+
+const MAP_SPAN_BG_COLOR_CLASS: Record<Intent, string> = {
+	default: "bg-[--black-700]",
+	primary: "bg-brand",
+	info: "bg-info",
+	success: "bg-success",
+	warning: "bg-warning",
+	danger: "bg-danger",
+	inverse: "bg-inverse",
+};
+
 function Timestamp() {
 	const currentTime = new Date().toLocaleTimeString([], {
 		hour: "numeric",
 		minute: "2-digit",
 		hour12: true,
 	});
-	return <p className="text-white-900">Today {currentTime}</p>;
+	return (
+		<Text size="caption" lineHeight="tight" weight="normal">
+			{`Today ${currentTime}`}
+		</Text>
+	);
 }
 
 export default function Alert({
@@ -61,15 +169,15 @@ export default function Alert({
 	icon,
 	title,
 	body,
-	duration = 10_000,
+	duration,
 	intent = "default",
-	hasTitle = true,
-	hasBody = true,
-	hasTimer = true,
 	hasTimestamp = true,
 	hasAction = true,
 	actionLabel,
 }: AlertProps) {
+	const onCloseRef = useRef(onClose);
+	onCloseRef.current = onClose;
+
 	const renderIcon = (Icon: Icon) => {
 		if (React.isValidElement(Icon)) return Icon;
 		if (typeof Icon === "function") return <Icon />;
@@ -79,16 +187,18 @@ export default function Alert({
 	useEffect(() => {
 		let timer: NodeJS.Timeout | undefined;
 
-		if (isActive && hasTimer) {
+		if (isActive && duration) {
 			timer = setTimeout(() => {
-				onClose();
+				if (onCloseRef.current) {
+					onCloseRef.current();
+				}
 			}, duration);
 		}
 
 		return () => {
 			if (timer) clearTimeout(timer);
 		};
-	}, [isActive, duration, hasTimer]);
+	}, [isActive, duration]);
 
 	return (
 		<motion.div
@@ -109,32 +219,32 @@ export default function Alert({
 					<div
 						className={cn(
 							"flex items-start justify-center",
-							"text" + MAP_INTENT[intent] || "text" + MAP_INTENT.default
+							MAP_ICON_COLOR_CLASS[intent]
 						)}
 					>
 						{renderIcon(icon || RiInformationFill)}
 					</div>
 					<div className="flex flex-1 justify-between">
-						<div className="flex flex-1 flex-col gap-y-2 px-4 text-xs ">
-							{hasTitle && (
-								<h1 className="font-bold capitalize">
+						<div className="flex flex-1 flex-col gap-y-2 px-4 text-xs">
+							{title && (
+								<Text size="caption" lineHeight="tight" weight="semibold">
 									{title || "Notification Title"}
-								</h1>
+								</Text>
 							)}
-							{hasBody && (
-								<p className="text-white-900">
+							{body && (
+								<Text size="caption" lineHeight="tight" weight="normal">
 									{body || "Brief feedback message"}
-								</p>
+								</Text>
 							)}
 							{hasTimestamp && <Timestamp />}
 						</div>
 						{hasAction && (
 							<Button
 								onClick={onClick}
-								variant="solid"
+								variant={`${intent === "default" ? "outline" : "solid"}`}
 								size="small"
-								className="self-center justify-self-center capitalize mr-6"
-								intent={intent} // Maps intent directly
+								className="mr-6 self-center justify-self-center capitalize "
+								intent={intent}
 							>
 								{actionLabel || "Button"}
 							</Button>
@@ -142,14 +252,16 @@ export default function Alert({
 					</div>
 
 					<span
-						key={isActive && hasTimer ? "active" : "inactive"}
+						key={isActive && duration ? "active" : "inactive"}
 						style={
-							{ "--animation-duration": `${duration}ms` } as React.CSSProperties
+							{
+								"--animation-duration": `${duration}ms`,
+							} as React.CSSProperties
 						}
 						className={cn(
-							"timer absolute bottom-0 left-0 h-1 w-full",
-							"bg" + MAP_INTENT[intent] || "bg" + MAP_INTENT.default,
-							isActive && hasTimer && "isAnimating"
+							"timer absolute bottom-0 left-0 h-1 w-full ",
+							MAP_SPAN_BG_COLOR_CLASS[intent],
+							isActive && duration && "isAnimating"
 						)}
 					/>
 				</div>

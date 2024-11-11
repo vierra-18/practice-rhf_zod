@@ -1,9 +1,9 @@
 "use client";
 
-import type React from "react";
 // import { useState } from "react";
 import type { Note } from "@/types/types";
 import { AnimatePresence } from "framer-motion";
+import type React from "react";
 // import { BiEdit } from "react-icons/bi";
 // import { MdDeleteOutline } from "react-icons/md";
 // import { renderIcon } from "@/helpers/helper";
@@ -33,7 +33,7 @@ const NoteItems: React.FC<NoteItemsProps> = ({
 			{notes.map((note) => (
 				<button
 					onContextMenu={handleRightClick}
-					className="border-l-4 w-full flex flex-col items-start justify-center max-w-52 px-3 my-1 border-b hover:bg-zinc-600 transition-all duration-150 cursor-pointer"
+					className="my-1 flex w-full max-w-52 cursor-pointer flex-col items-start justify-center border-b border-l-4 px-3 transition-all duration-150 hover:bg-zinc-600"
 					onClick={() => {
 						onEditNote(note);
 					}}
@@ -44,12 +44,12 @@ const NoteItems: React.FC<NoteItemsProps> = ({
 					<AnimatePresence>
 						{
 							<>
-								<h2 className="text-nowrap truncate">
+								<h2 className="truncate text-nowrap">
 									{note.title} {note.important && <span>(Important)</span>}
 								</h2>
-								<p className="text-nowrap truncate text-xs">{note.text}</p>
+								<p className="truncate text-nowrap text-xs">{note.text}</p>
 
-								<small className="text-nowrap my-2 text-[.5rem] brightness-90">
+								<small className="my-2 text-nowrap text-[.5rem] brightness-90">
 									Modified:{" "}
 									{new Date(note.createdAt).toLocaleString(undefined, {
 										month: "short",
@@ -71,14 +71,14 @@ const NoteItems: React.FC<NoteItemsProps> = ({
 												year: "numeric",
 												hour: "numeric",
 												minute: "numeric",
-											})
+										  })
 										: new Date(note.updatedAt).toLocaleString(undefined, {
 												month: "short",
 												day: "numeric",
 												year: "numeric",
 												hour: "numeric",
 												minute: "numeric",
-											})}
+										  })}
 								</small>
 							</>
 						}

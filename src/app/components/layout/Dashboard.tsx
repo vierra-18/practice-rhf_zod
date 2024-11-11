@@ -54,20 +54,20 @@ export default function Dashboard() {
 		title: string,
 		text: string,
 		important?: boolean,
-		noteColor?: string,
+		noteColor?: string
 	) => {
 		editNote(id, title, text, important, noteColor);
 		setEditingNote(undefined); // Clear edit mode after updating
 	};
 
 	return (
-		<div className=" flex min-h-full w-full">
-			<Sidebar
+		<div className=" flex min-h-screen w-full">
+			{/* <Sidebar
 				notes={notes}
 				onEditNote={handleEditNote}
 				onNewNote={handleNewNote}
-			/>
-			<div className="flex flex-col w-full">
+			/> */}
+			<div className="flex min-h-full w-full flex-col border-black border-l">
 				<Topbar />
 				<div className="p-6 ">
 					{/* <NoteForm
