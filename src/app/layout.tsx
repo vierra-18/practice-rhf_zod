@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 // import localFont from "next/font/local";
 import "./globals.css";
 import { AlertProvider } from "./components/multiverse/Alert";
+import { MultiverseProvider } from "./components/multiverse/MultiverseProvider";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -28,8 +29,11 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
+			<head>
+				<title>Playground</title>
+			</head>
 			<body className={" text-white-100 antialiased"}>
-				<AlertProvider maxAlerts={7}>{children}</AlertProvider>
+				<MultiverseProvider>{children}</MultiverseProvider>
 			</body>
 		</html>
 	);
