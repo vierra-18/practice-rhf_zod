@@ -3,6 +3,7 @@
 import type { Metadata } from "next";
 // import localFont from "next/font/local";
 import "./globals.css";
+import ModalProvider from "./components/jerico/ModalProvider";
 import { AlertProvider } from "./components/multiverse/Alert";
 import { MultiverseProvider } from "./components/multiverse/MultiverseProvider";
 
@@ -33,7 +34,9 @@ export default function RootLayout({
 				<title>Playground</title>
 			</head>
 			<body className={" text-white-100 antialiased"}>
-				<MultiverseProvider>{children}</MultiverseProvider>
+				<ModalProvider>
+					<MultiverseProvider>{children}</MultiverseProvider>
+				</ModalProvider>
 			</body>
 		</html>
 	);
