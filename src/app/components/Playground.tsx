@@ -12,6 +12,7 @@ function getRandomWord() {
 		"Echo",
 		"Zephyr",
 		"Luna",
+		"Sola",
 		"Blaze",
 		"Aurora",
 		"Nova",
