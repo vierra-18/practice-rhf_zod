@@ -1,8 +1,0 @@
-.modal-btn {
-	@apply border-none bg-transparent text-2xl
-		relative transition-colors ease-in-out
-		grid place-items-center rounded
-		hover:shadow-button aspect-square hover:bg-interface-hovered active:bg-interface-active
-		ring-0 focus:outline-none focus:ring-4 focus:ring-interface-focus
-		disabled:border disabled:border-subtle disabled:bg-interface-disabled disabled:text-disabled disabled:cursor-not-allowed;
-}
