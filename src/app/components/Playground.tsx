@@ -6,82 +6,74 @@ import { motion } from "framer-motion";
 import { cn } from "../lib/utilities";
 import MessageBox from "./multiverse/MessageBox";
 import Modal from "./multiverse/Modal";
-import { useCreateModal } from "./multiverse/ModalProvider";
-
-type SimpleModalProps = {
-	onClose: () => void;
-	children: React.ReactNode;
-};
-
-function SimpleModal({ onClose, children }: SimpleModalProps) {
-	return (
-		<motion.div
-			className={cn(
-				"relative my-10 rounded-lg border border-subtle bg-interface shadow-lg",
-				"flex h-fit w-screen flex-col justify-between text max-w-lg"
-			)}
-			onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
-		>
-			<div
-				className={cn(
-					"flex h-[4.25rem] max-h-[4.25rem] w-full items-center justify-between",
-					"rounded-t-lg border-b border-subtle px-6 show-guide-3 "
-				)}
-			>
-				<button
-					type="button"
-					className="hover:shadow-button aspect-square rounded text-2xl duration-200 hover:bg-interface-hovered"
-					onClick={onClose}
-					aria-label="Close modal"
-				>
-					<IoCloseOutline />
-				</button>
-			</div>
-
-			<div className="flex-1 p-6">{children}</div>
-		</motion.div>
-	);
-}
-
+import useCreateModal from "./multiverse/useCreateModal";
+/**
+ * Utility function to generate random word and index
+ * Used for demonstration of dynamic modal content updates
+ */
 function getRandomWord() {
-	const words = [
-		"Phoenix",
-		"Galaxy",
-		"Nimbus",
-		"Echo",
-		"Zephyr",
-		"Luna",
-		"Sola",
-		"Blaze",
-		"Aurora",
-		"Nova",
-		"Starlight",
-	];
+	const words = ["Phoenix", "Galaxy", "Nimbus" /* ... */];
 	const index = Math.floor(Math.random() * words.length);
 	return { word: words[index], index };
 }
 
+/**
+ * Main playground content demonstrating modal functionality
+ * Shows different ways to create and manage modals with dynamic content
+ */
 function PlaygroundContent() {
+	// Main state for dynamic content updates
 	const [data, setData] = useState({ id: 0, name: "Phoenix", counter: 0 });
+	// Separate counter state (consider removing if not needed)
+	const [counter, setCounter] = useState(0);
 
+	/**
+	 * Setup intervals for dynamic content updates
+	 * - Counter updates every second
+	 * - Name updates every 5 seconds
+	 */
 	useEffect(() => {
+		// Update counter every second
 		const counterInterval = setInterval(() => {
 			setData((prev) => ({ ...prev, counter: prev.counter + 1 }));
 		}, 1000);
 
+		// Update name and ID every 5 seconds
 		const nameInterval = setInterval(() => {
 			const { word, index } = getRandomWord();
 			setData((prev) => ({ ...prev, name: word, id: index }));
 		}, 5000);
 
+		// Cleanup intervals on component unmount
 		return () => {
 			clearInterval(counterInterval);
 			clearInterval(nameInterval);
 		};
 	}, []);
 
-	const createModal = useCreateModal(data);
+	// Initialize modal creation with state to be observed
+	// Any changes to this state will trigger updates in all active modals using the hook
+	const createModal = useCreateModal({ data, counter });
+	/**
+	 - May observe unnecessary state changes
+	 - Less granular control over what each modal observes
+	 - Could lead to unnecessary re-renders if modals only need specific pieces of state
+	*/
+	// const showUserModal = useCreateModal({ user });
+	// const showCounterModal = useCreateModal({ counter });
+	// const showDataModal = useCreateModal({ data });
+	/**
+	- More precise control over what each modal observes
+  - Better performance when states update independently
+	- Clearer intent for each modal's purpose
+	- Easier to debug which state changes affect which modals
+	- Better code splitting potential
+	*/
 
+	/**
+	 * Modal opening handlers
+	 * Each handler creates a different type of modal with specific content and actions
+	 */
 	const openSecondModal = useCallback(() => {
 		createModal({
 			component: ({ onClose, state }) => (
@@ -91,47 +83,56 @@ function PlaygroundContent() {
 					intent="success"
 					size="sm"
 					primaryAction={{
-						label: `Open Modal 3 (${state.counter})`,
+						label: `Open Modal 3 (${state.data.counter})`,
 						onClick: openThirdModal,
 					}}
 				>
 					<div className="text-lg flex flex-col gap-y-5">
-						Nested Counter Value: {state.counter}
+						{/* Access counter through state.data for consistency */}
+						Nested Counter Value: {state.data.counter}
 					</div>
 				</Modal>
 			),
 		});
 	}, [createModal]);
 
+	/**
+	 * First modal - demonstrates dynamic title and content updates
+	 */
 	const openModal = useCallback(() => {
 		createModal({
 			component: ({ onClose, state }) => (
 				<Modal
 					onClose={onClose}
-					title={`Modal 1 - ${state.name}`}
+					title={`Modal 1 - ${state.data.name}`}
 					intent="danger"
 					size="3xl"
 					primaryAction={{
-						label: `Open Modal 2 (${state.counter})`,
+						label: `Open Modal 2 (${state.data.counter})`,
 						onClick: openSecondModal,
 					}}
 				>
-					ID: {state.id}, Name: {state.name}, Counter value: {state.counter}
+					ID: {state.data.id}, Name: {state.data.name}, Counter value:{" "}
+					{state.data.counter}
 				</Modal>
 			),
 		});
 	}, [createModal, openSecondModal]);
+
+	/**
+	 * Third modal - demonstrates custom styling and multiple actions
+	 */
 	const openThirdModal = useCallback(() => {
 		createModal({
 			component: ({ onClose, state }) => (
 				<div className="text size-96 bg-interface grid place-items-center">
-					counter: {state.counter}
+					counter: {state.data.counter}
 					<button
 						className="bg-black/20 rounded-md border p-4"
 						onClick={onClose}
 					>
 						close
-					</button>{" "}
+					</button>
 					<button
 						className="bg-black/20 rounded-md border p-4"
 						onClick={openSecondModal}
@@ -145,9 +146,11 @@ function PlaygroundContent() {
 
 	return (
 		<div className="space-y-4">
+			{/* Display current state values */}
 			<div className="text font-extrabold">
 				{data.name} (ID: {data.id}) Counter: {data.counter}
 			</div>
+			{/* Modal trigger buttons */}
 			<Button variant="solid" intent="primary" onClick={openModal}>
 				Open Modal Number 1
 			</Button>
@@ -161,7 +164,14 @@ function PlaygroundContent() {
 	);
 }
 
-// Main Playground component wrapped with ModalProvider
+/**
+ * Main Playground component
+ * Note: This component should be wrapped with ModalProvider in the parent component
+ * Example:
+ * <ModalProvider>
+ *   <Playground />
+ * </ModalProvider>
+ */
 export default function Playground() {
 	return <PlaygroundContent />;
 }

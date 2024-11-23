@@ -3,9 +3,9 @@
 import type { Metadata } from "next";
 // import localFont from "next/font/local";
 import "./globals.css";
-import ModalProvider from "./components/jerico/ModalProvider";
 import { AlertProvider } from "./components/multiverse/Alert";
 import { MultiverseProvider } from "./components/multiverse/MultiverseProvider";
+import ModalProvider from "./components/multiverse/ModalProvider";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",

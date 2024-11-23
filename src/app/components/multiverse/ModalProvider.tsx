@@ -3,9 +3,6 @@
 import React, {
 	createContext,
 	useContext,
-	useCallback,
-	useRef,
-	useEffect,
 	useSyncExternalStore,
 	type ReactNode,
 } from "react";
@@ -18,7 +15,7 @@ type ModalProps<TState> = {
 	onClose: () => void;
 };
 
-type ModalConfig<TState = unknown> = {
+export type ModalConfig<TState = unknown> = {
 	component: React.ComponentType<ModalProps<TState>>;
 };
 
@@ -103,33 +100,13 @@ class ModalStore {
 const store = new ModalStore();
 const ModalContext = createContext<ModalContextType | null>(null);
 
-export const useModal = () => {
+export const useModalContext = () => {
 	const context = useContext(ModalContext);
 	if (!context) {
-		throw new Error("useModal must be used within ModalProvider");
+		throw new Error("useModalContext must be used within ModalProvider");
 	}
 	return context;
 };
-
-export function useCreateModal<TState>(initialState: TState) {
-	const { createModal, updateState } = useModal();
-	const modalIdsRef = useRef<Set<string>>(new Set());
-
-	useEffect(() => {
-		modalIdsRef.current.forEach((id) => {
-			updateState(id, initialState);
-		});
-	}, [initialState, updateState]);
-
-	return useCallback(
-		(config: ModalConfig<TState>) => {
-			const id = createModal(config, initialState);
-			modalIdsRef.current.add(id);
-			return id;
-		},
-		[createModal, initialState]
-	);
-}
 
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
 	const modals = useSyncExternalStore(
@@ -163,7 +140,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 						>
 							<motion.div
 								key={modal.id}
-								className="fixed inset-0 grid place-items-center bg-black/50"
+								className="fixed inset-0 grid place-items-center bg-black/20"
 								style={{ zIndex: 1000 + index }}
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
