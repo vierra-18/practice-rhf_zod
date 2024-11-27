@@ -130,7 +130,7 @@ export function AlertProvider({ children, maxAlerts = 5 }: AlertProviderProps) {
 }
 
 const MAP_ICON_COLOR_CLASS: Record<Intent, string> = {
-	default: "text-[--black-700]",
+	default: "text",
 	primary: "text-brand",
 	info: "text-info",
 	success: "text-success",
@@ -162,7 +162,7 @@ function Timestamp() {
 	);
 }
 
-export default function Alert({
+function Alert({
 	isActive = false,
 	onClose,
 	onClick,

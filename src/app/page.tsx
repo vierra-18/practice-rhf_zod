@@ -4,7 +4,7 @@ import Dashboard from "./components/layout/Dashboard";
 
 export default function Home() {
 	return (
-		<div className="min-h-screen max-w-screen bg-black/10">
+		<div className="min-h-screen max-w-screen bg-purple-800/10">
 			<main className="grid h-full w-full place-items-center">
 				<div className="container flex h-full flex-col items-center justify-center ">
 					{/* <Sidebar /> */}

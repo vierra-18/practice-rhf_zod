@@ -1,12 +1,25 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import Button from "./multiverse/Button";
-import { IoCloseOutline } from "react-icons/io5";
-import { motion } from "framer-motion";
-import { cn } from "../lib/utilities";
+
+import { div } from "framer-motion/client";
+import { LuArrowDownLeft, LuArrowUpRight } from "react-icons/lu";
+import { MdOutlineBarChart, MdOutlineMultilineChart } from "react-icons/md";
+import { RiInformationFill } from "react-icons/ri";
 import MessageBox from "./multiverse/MessageBox";
 import Modal from "./multiverse/Modal";
+import Note from "./multiverse/Note";
 import useCreateModal from "./multiverse/useCreateModal";
+import StatCard from "./multiverse/StatCard";
+
+import {
+	AreaChart,
+	Area,
+	ResponsiveContainer,
+	XAxis,
+	YAxis,
+	Tooltip,
+} from "recharts";
 /**
  * Utility function to generate random word and index
  * Used for demonstration of dynamic modal content updates
@@ -18,6 +31,19 @@ function getRandomWord() {
 }
 
 /**
+ * Dummy data for the tiny line chart
+ */
+const chartData = [
+	{ name: "Jan", value: 40 },
+	{ name: "Feb", value: 30 },
+	{ name: "Mar", value: 20 },
+	{ name: "Apr", value: 27 },
+	{ name: "May", value: 18 },
+	{ name: "Jun", value: 23 },
+	{ name: "Jul", value: 34 },
+];
+
+/**
  * Main playground content demonstrating modal functionality
  * Shows different ways to create and manage modals with dynamic content
  */
@@ -25,6 +51,7 @@ function PlaygroundContent() {
 	// Main state for dynamic content updates
 	const [data, setData] = useState({ id: 0, name: "Phoenix", counter: 0 });
 	// Separate counter state (consider removing if not needed)
+	// biome-ignore lint/correctness/noUnusedVariables: <explanation>
 	const [counter, setCounter] = useState(0);
 
 	/**
@@ -54,6 +81,7 @@ function PlaygroundContent() {
 	// Initialize modal creation with state to be observed
 	// Any changes to this state will trigger updates in all active modals using the hook
 	const createModal = useCreateModal({ data, counter });
+	const showModal = useCreateModal({});
 	/**
 	 - May observe unnecessary state changes
 	 - Less granular control over what each modal observes
@@ -87,7 +115,7 @@ function PlaygroundContent() {
 						onClick: openThirdModal,
 					}}
 				>
-					<div className="text-lg flex flex-col gap-y-5">
+					<div className="flex flex-col gap-y-5 text-lg">
 						{/* Access counter through state.data for consistency */}
 						Nested Counter Value: {state.data.counter}
 					</div>
@@ -112,7 +140,7 @@ function PlaygroundContent() {
 						onClick: openSecondModal,
 					}}
 				>
-					ID: {state.data.id}, Name: {state.data.name}, Counter value:{" "}
+					ID: {state.data.id}, Name: {state.data.name}, Counter value:
 					{state.data.counter}
 				</Modal>
 			),
@@ -123,21 +151,15 @@ function PlaygroundContent() {
 	 * Third modal - demonstrates custom styling and multiple actions
 	 */
 	const openThirdModal = useCallback(() => {
-		createModal({
-			component: ({ onClose, state }) => (
-				<div className="text size-96 bg-interface grid place-items-center">
-					counter: {state.data.counter}
-					<button
-						className="bg-black/20 rounded-md border p-4"
-						onClick={onClose}
-					>
-						close
-					</button>
-					<button
-						className="bg-black/20 rounded-md border p-4"
-						onClick={openSecondModal}
-					>
-						open second modal
+		showModal({
+			component: ({ onClose }) => (
+				<div
+					// onClick={onClose}
+					className="text flex flex-col gap-4 rounded border bg-neutral-50 p-20"
+				>
+					hello
+					<button type="button" className="border p-4" onClick={onClose}>
+						close me
 					</button>
 				</div>
 			),
@@ -160,6 +182,111 @@ function PlaygroundContent() {
 			<Button variant="solid" intent="success" onClick={openThirdModal}>
 				Open Modal Number 3
 			</Button>
+			<div className="text flex flex-col gap-2">
+				<span className="font-extrabold capitalize">default</span>
+				<Note
+					message="Lorem, ipsum dolor sit amet consectetur"
+					title="TITLE"
+					intent="default"
+					icon={RiInformationFill}
+					action={{
+						label: "Action Button",
+						onClick: () => {
+							openModal();
+						},
+					}}
+				/>
+				<span className="font-extrabold capitalize">danger</span>
+				<Note
+					message="Lorem, ipsum dolor sit amet consectetur"
+					title="TITLE"
+					intent="danger"
+					icon={RiInformationFill}
+					action={{
+						label: "Action Button",
+						onClick: () => {
+							openModal();
+						},
+					}}
+				/>
+				<span className="font-extrabold capitalize">success</span>
+				<Note
+					message="Lorem, ipsum dolor sit amet consectetur"
+					title="TITLE"
+					intent="success"
+					icon={RiInformationFill}
+					action={{
+						label: "Action Button",
+						onClick: () => {
+							openModal();
+						},
+					}}
+				/>
+				<span className="font-extrabold capitalize">warning</span>
+				<Note
+					message="Lorem, ipsum dolor sit amet consectetur"
+					title="TITLE"
+					intent="warning"
+					icon={RiInformationFill}
+					action={{
+						label: "Action Button",
+						onClick: () => {
+							openModal();
+						},
+					}}
+				/>
+				<span className="font-extrabold capitalize">info</span>
+				<Note
+					message="Lorem, ipsum dolor sit amet consectetur"
+					title="TITLE"
+					intent="info"
+					icon={RiInformationFill}
+					action={{
+						label: "Action Button",
+						onClick: () => {
+							openModal();
+						},
+					}}
+				/>
+			</div>
+
+			<div className="text flex flex-col gap-3 py-10">
+				<StatCard
+					title="Stat Card Title"
+					icon={MdOutlineBarChart}
+					data={`${data.counter}`}
+					badge={{ label: "70%", intent: "success", trend: "up" }}
+					action={{ label: "Action", onClick: () => {} }}
+				/>
+				<StatCard
+					title="Stat Card Title"
+					icon={MdOutlineBarChart}
+					data={`${data.counter}`}
+				/>
+				<StatCard title="Stat Card Title" data={`${data.counter}`} />
+				<StatCard
+					title="Stat Card Title"
+					icon={MdOutlineMultilineChart}
+					data={`${data.counter}`}
+					badge={{ label: "20%", intent: "danger", trend: "down" }}
+					action={{ label: "Action", onClick: () => {} }}
+				>
+					<ResponsiveContainer width="100%" height={100}>
+						<AreaChart data={chartData}>
+							<XAxis dataKey="name" hide />
+							<YAxis hide />
+							<Tooltip />
+							<Area
+								type="monotone"
+								dataKey="value"
+								stroke="#8884d8"
+								fill="#8884d8"
+								strokeWidth={2}
+							/>
+						</AreaChart>
+					</ResponsiveContainer>
+				</StatCard>
+			</div>
 		</div>
 	);
 }

@@ -10,9 +10,12 @@ import {
 import { motion } from "framer-motion";
 import type { IconType } from "react-icons";
 import { RiInformationFill } from "react-icons/ri";
+
+import { cn } from "@/app/lib/utilities";
+
 import Text from "./Text";
 import Button from "./Button";
-import { cn } from "@/app/lib/utilities";
+
 type Intent = Exclude<ComponentProps<typeof Button>["intent"], undefined>;
 type Icon = IconType | ReactElement;
 const TEXT_COLOR_CLASS: Record<Intent, string> = {
@@ -33,7 +36,7 @@ type MessageBoxProps = DialogProps & {
 	className?: string;
 	type: "display" | "popup";
 	icon?: Icon;
-	onCloseMessageBox: () => void;
+	onCloseMessageBox?: () => void;
 };
 const MessageBox: React.FC<MessageBoxProps> = ({
 	title,
@@ -57,6 +60,8 @@ const MessageBox: React.FC<MessageBoxProps> = ({
 		}
 		return null;
 	};
+
+	console.log("message box open");
 	return (
 		<Dialog open={true} {...props}>
 			<div
@@ -107,7 +112,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({
 								<Button
 									onClick={() => {
 										closeAction?.onClick();
-										onCloseMessageBox();
+										onCloseMessageBox?.();
 									}}
 									variant={"solid"}
 									size="default"

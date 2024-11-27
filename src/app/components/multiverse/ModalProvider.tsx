@@ -1,14 +1,14 @@
 "use client";
 
+import { Dialog, DialogPanel } from "@headlessui/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { isEqual } from "lodash";
 import React, {
 	createContext,
 	useContext,
 	useSyncExternalStore,
 	type ReactNode,
 } from "react";
-import { isEqual } from "lodash";
-import { Dialog, DialogPanel } from "@headlessui/react";
-import { AnimatePresence, motion } from "framer-motion";
 
 type ModalProps<TState> = {
 	state: TState;
