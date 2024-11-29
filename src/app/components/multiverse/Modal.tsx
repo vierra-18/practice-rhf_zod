@@ -35,10 +35,12 @@ type ModalProps = {
   size?: Size;
   primaryAction?: {
     label: string;
+    close?: boolean;
     onClick: () => void;
   };
   secondaryAction?: {
     label: string;
+    close?: boolean;
     onClick: () => void;
   };
   children: React.ReactNode;
@@ -92,7 +94,7 @@ export default function Modal({
               className="capitalize"
               onClick={() => {
                 secondaryAction.onClick();
-                onClose();
+                secondaryAction.close && onClose();
               }}
             >
               {secondaryAction.label}
@@ -103,7 +105,10 @@ export default function Modal({
               variant="solid"
               intent={intent}
               className="capitalize"
-              onClick={primaryAction.onClick}
+              onClick={() => {
+                primaryAction.onClick();
+                primaryAction.close && onClose();
+              }}
             >
               {primaryAction.label}
             </Button>
