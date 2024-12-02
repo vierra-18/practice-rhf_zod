@@ -37,7 +37,6 @@ type BtnAction = {
 };
 type DrawerProps = {
 	children: ReactNode;
-	position?: "left" | "right";
 	className?: string;
 	secondaryAction?: BtnAction;
 	primaryAction?: BtnAction;
@@ -50,7 +49,6 @@ const Drawer: React.FC<DrawerProps> = ({
 	children,
 	title,
 	subTitle,
-	position = "left",
 	className,
 	secondaryAction,
 	primaryAction,
@@ -60,8 +58,7 @@ const Drawer: React.FC<DrawerProps> = ({
 	return (
 		<div
 			className={cn(
-				"fixed inset-y-0 bg-white p-6 shadow-lg",
-				position === "right" ? "right-0" : "left-0",
+				" h-screen max-h-screen bg-surface-overlay p-6 shadow-lg",
 				MAP_DRAWER_WIDTH_SIZE[size],
 				className
 			)}
@@ -91,7 +88,7 @@ const Drawer: React.FC<DrawerProps> = ({
 						<IoClose />
 					</button>
 				</Stack>
-				<Stack className="flex-1 overflow-y-auto">{children}</Stack>
+				<Stack className="flex-1 overflow-y-auto ">{children}</Stack>
 				<Stack
 					horizontal
 					distribute="between"

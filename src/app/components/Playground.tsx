@@ -2,11 +2,8 @@
 import { useCallback, useEffect, useState } from "react";
 import Button from "./multiverse/Button";
 
-import { div } from "framer-motion/client";
-import { LuArrowDownLeft, LuArrowUpRight } from "react-icons/lu";
 import { MdOutlineBarChart, MdOutlineMultilineChart } from "react-icons/md";
 import { RiInformationFill } from "react-icons/ri";
-import MessageBox from "./multiverse/MessageBox";
 import Modal from "./multiverse/Modal";
 import Note from "./multiverse/Note";
 import StatCard from "./multiverse/StatCard";
@@ -19,9 +16,8 @@ import {
 	YAxis,
 	Tooltip,
 } from "recharts";
-import ModalProvider, { useShowModal } from "./multiverse/test/Modal";
-import useCreatePopup from "./multiverse/useCreatePopup";
-import PopupProvider from "./multiverse/PopupProvider";
+import useCreateOverlay from "./multiverse/useCreateOverlay";
+import Drawer from "./multiverse/Drawer";
 /**
  * Utility function to generate random word and index
  * Used for demonstration of dynamic modal content updates
@@ -82,8 +78,8 @@ function PlaygroundContent() {
 
 	// Initialize modal creation with state to be observed
 	// Any changes to this state will trigger updates in all active modals using the hook
-	const createModal = useCreatePopup({ data });
-	const showModal = useCreatePopup({});
+	const createModal = useCreateOverlay({ data });
+	const showModal = useCreateOverlay({});
 	/**
 	 - May observe unnecessary state changes
 	 - Less granular control over what each modal observes
@@ -121,7 +117,56 @@ function PlaygroundContent() {
 						// close: true,
 					}}
 				>
-					stuff goes
+					<p>
+						Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam at,
+						necessitatibus consequuntur odit quod reprehenderit placeat
+						repudiandae inventore dignissimos provident.
+					</p>
+					<p>
+						Quos quaerat culpa possimus aliquid atque assumenda aperiam velit
+						delectus, eius iure repellendus! Fugit perspiciatis assumenda sequi
+						modi eligendi deserunt?
+					</p>
+					<p>
+						Neque beatae ipsam optio accusantium similique, at quas veniam.
+						Deserunt tenetur aperiam consectetur ex molestias! Quos fugiat
+						laboriosam repellat inventore!
+					</p>
+					<p>
+						Iste, placeat pariatur provident aspernatur nostrum culpa deserunt
+						officia voluptatem repellendus labore qui dolores esse sapiente
+						cupiditate eligendi porro non?
+					</p>
+					<p>
+						Nihil, rerum voluptate odio maxime quos provident deleniti enim
+						nulla ut totam iste ea cupiditate laboriosam voluptatibus labore ex
+						at!
+					</p>
+					<p>
+						Tempora nobis vel sapiente ut voluptates ullam dignissimos itaque
+						magnam animi consequatur, odit unde voluptatum commodi officiis
+						recusandae voluptatem eligendi!
+					</p>
+					<p>
+						Reprehenderit assumenda quae, unde nulla amet eaque quas dolorum
+						nobis repellat voluptate eligendi? Quibusdam atque explicabo dicta
+						inventore quod facilis!
+					</p>
+					<p>
+						Necessitatibus, totam placeat fugiat corporis beatae unde tempore,
+						ipsa porro consequuntur ab quis ad provident in dolorum, voluptatem
+						nisi quia!
+					</p>
+					<p>
+						Atque laudantium magni ex esse natus numquam dolorem, vitae nulla
+						eligendi unde tenetur in velit consequatur aliquam ab! Quibusdam,
+						necessitatibus.
+					</p>
+					<p>
+						Enim consequatur quo labore aliquam recusandae, dicta nisi excepturi
+						fugiat incidunt. Mollitia totam ea officiis id, perferendis sint
+						consequuntur harum!
+					</p>
 				</Modal>
 			),
 		});
@@ -132,9 +177,10 @@ function PlaygroundContent() {
 	 */
 	const openModal = () => {
 		createModal({
-			component: ({ onClose, state }) => (
+			position: "left",
+			component: ({ close, state }) => (
 				<Modal
-					onClose={onClose}
+					onClose={close}
 					title={`Modal 1 - ${state.data.name}`}
 					intent="danger"
 					size="3xl"
@@ -153,76 +199,76 @@ function PlaygroundContent() {
 	/**
 	 * Third modal - demonstrates custom styling and multiple actions
 	 */
-	const openThirdModal = useCallback(() => {
+	const openThirdModal = () => {
 		showModal({
-			component: ({ onClose }) => (
-				<div
-					// onClick={onClose}
-					className="text flex flex-col gap-4 rounded border bg-neutral-50 p-20"
+			component: () => (
+				<Drawer
+					title="Title" // optional
+					subTitle="subtitle" // optional
+					secondaryAction={{
+						label: "Button",
+						intent: "default",
+						variant: "solid",
+						onClick: () => console.log("Secondary Button Clicked"),
+					}}
+					primaryAction={{
+						label: "Primary Button",
+						intent: "primary",
+						variant: "solid",
+						onClick: () => console.log("Primary Button Clicked"),
+					}}
+					size="wide" // "narrow" | "medium" | "wide" | "extended" | "fullWidth"
+					onCloseDrawer={close}
 				>
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Et
-					repellendus, eveniet est quaerat beatae ipsum dolores quod doloremque,
-					reprehenderit corporis quidem cumque recusandae illum optio
-					praesentium sed? Ullam, esse nam velit reiciendis dignissimos dolores,
-					fugiat quisquam placeat minima sunt, voluptate adipisci exercitationem
-					perspiciatis? Natus nobis quia veniam, iste minus architecto. Animi
-					doloremque nam ipsum dolores itaque quo officia consequuntur dolore
-					corrupti voluptatem, magnam, quod tempore asperiores repellat deleniti
-					odit earum quam repellendus ad quos nemo eaque eveniet quasi culpa.
-					Laudantium laboriosam sed cumque, nobis, quisquam vel voluptatum
-					numquam rem asperiores dolores, temporibus exercitationem aperiam
-					natus repudiandae itaque. Hic, nam ab? Modi ratione placeat architecto
-					iure corporis esse quibusdam omnis labore eos. Amet hic, recusandae
-					quod nam fuga commodi nostrum dolor totam praesentium asperiores
-					mollitia! Veniam obcaecati laborum perspiciatis incidunt perferendis
-					architecto vitae illum, cumque ullam eaque mollitia accusantium, rem
-					temporibus inventore optio velit commodi fuga unde nemo iste quibusdam
-					officia. Ducimus qui ratione repellendus quaerat quis id, maiores
-					error fugiat voluptas iusto sapiente, odit necessitatibus eum nihil?
-					Autem labore sed unde doloribus nostrum blanditiis libero commodi
-					nulla atque ullam, nesciunt et porro. Deleniti iusto quam itaque
-					accusamus distinctio? Vero culpa itaque deserunt doloribus fuga ipsum
-					distinctio, molestiae autem non minus. In tenetur provident quas vel
-					maiores ratione animi assumenda, blanditiis ab ea rem? Unde fugiat
-					aperiam tempore commodi non! Quod fuga accusamus facilis vero nostrum
-					necessitatibus sequi voluptate deserunt dolorem earum! Laborum
-					quisquam dolores distinctio? Atque, voluptatem tempora esse culpa odio
-					voluptate aut itaque a, quibusdam similique modi, animi natus. Nulla
-					illum laborum enim quo at deleniti quisquam nobis tempora blanditiis,
-					voluptatum, ipsum quas, ex soluta voluptate ut minus error odio
-					eveniet autem laboriosam. Numquam ut mollitia aut voluptatibus.
-					Explicabo itaque omnis voluptate natus numquam dicta vitae recusandae
-					repellendus mollitia sed suscipit veniam, ut optio modi ex illum
-					distinctio delectus! Quibusdam nulla pariatur maiores nostrum
-					distinctio, saepe magni animi, voluptatem quo voluptate architecto
-					quaerat eaque porro praesentium ad quod facilis. Esse dolores rerum
-					soluta, quis blanditiis, eos optio ex laudantium autem itaque commodi
-					repudiandae pariatur temporibus deleniti, dolor nisi amet eligendi
-					velit nihil porro obcaecati iste! Quas, eaque. Animi, sint! Aliquam
-					doloribus accusantium ipsam totam aliquid delectus. Odit, quibusdam
-					laborum quae, vel voluptas rerum corrupti corporis velit atque itaque
-					nobis reprehenderit non consectetur architecto inventore dignissimos
-					repudiandae quia animi quis consequuntur dicta laudantium repellendus!
-					Accusantium, iure. Sit, impedit dolores voluptatum et mollitia nobis
-					sunt, quae amet nesciunt atque facilis incidunt? Architecto nam, non
-					error nostrum ea a sapiente assumenda harum culpa officia vero,
-					suscipit mollitia earum! Modi autem tempora inventore, sapiente
-					distinctio facilis perspiciatis quasi, veniam soluta accusamus ratione
-					perferendis laborum incidunt cumque, optio est temporibus tempore
-					laboriosam! Rerum dolores, cum illum obcaecati possimus laboriosam
-					blanditiis tempore enim esse quaerat. Repudiandae in ducimus quidem
-					aliquam impedit voluptatum odit quibusdam vitae aut, id tempore qui
-					maiores suscipit esse non. Et aspernatur facilis voluptatum, ullam
-					earum atque illum. Culpa laborum fuga, magnam eos saepe officiis quasi
-					delectus quibusdam perferendis provident blanditiis odio! Quo possimus
-					rerum reprehenderit ipsum. Impedit tempore distinctio dolorum nam!
-					<button type="button" className="border p-4" onClick={onClose}>
-						close me
-					</button>
-				</div>
+					<div className="flex flex-col gap-2">
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+					</div>
+				</Drawer>
 			),
+			position: "right",
 		});
-	}, [createModal, openSecondModal]);
+	};
+	const openLeftDrawer = () => {
+		showModal({
+			component: () => (
+				<Drawer
+					title="Title" // optional
+					subTitle="subtitle" // optional
+					secondaryAction={{
+						label: "Button",
+						intent: "default",
+						variant: "solid",
+						onClick: () => console.log("Secondary Button Clicked"),
+					}}
+					primaryAction={{
+						label: "Primary Button",
+						intent: "primary",
+						variant: "solid",
+						onClick: () => console.log("Primary Button Clicked"),
+					}}
+					size="wide" // "narrow" | "medium" | "wide" | "extended" | "fullWidth"
+					onCloseDrawer={close}
+				>
+					<div className="flex flex-col gap-2">
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+						<Button>Sample Button</Button>
+					</div>
+				</Drawer>
+			),
+			position: "left",
+		});
+	};
 
 	return (
 		<div className="space-y-4">
@@ -238,7 +284,10 @@ function PlaygroundContent() {
 				Open Modal Number 2
 			</Button>
 			<Button variant="solid" intent="success" onClick={openThirdModal}>
-				Open Modal Number 3
+				Open right drawer
+			</Button>
+			<Button variant="solid" intent="success" onClick={openLeftDrawer}>
+				Open left drawer
 			</Button>
 			<div className="text flex flex-col gap-2">
 				<span className="font-extrabold capitalize">default</span>
@@ -358,9 +407,5 @@ function PlaygroundContent() {
  * </ModalProvider>
  */
 export default function Playground() {
-	return (
-		<ModalProvider>
-			<PlaygroundContent />
-		</ModalProvider>
-	);
+	return <PlaygroundContent />;
 }

@@ -6,7 +6,7 @@ import "./globals.css";
 import { AlertProvider } from "./components/multiverse/Alert";
 import { MultiverseProvider } from "./components/multiverse/MultiverseProvider";
 import ModalProvider from "./components/multiverse/ModalProvider";
-import PopupProvider from "./components/multiverse/PopupProvider";
+import OverlayProvider from "./components/multiverse/OverlayProvider";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -35,9 +35,9 @@ export default function RootLayout({
 				<title>Playground</title>
 			</head>
 			<body className={" text-white-100 antialiased"}>
-				<PopupProvider>
+				<OverlayProvider>
 					<MultiverseProvider>{children}</MultiverseProvider>
-				</PopupProvider>
+				</OverlayProvider>
 			</body>
 		</html>
 	);

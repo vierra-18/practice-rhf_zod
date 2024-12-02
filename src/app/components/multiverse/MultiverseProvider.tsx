@@ -1,7 +1,7 @@
 // UIProvider.tsx
 import React, { ReactNode } from "react";
 import { AlertProvider } from "./Alert";
-import PopupProvider from "./PopupProvider";
+import PopupProvider from "./OverlayProvider";
 
 interface UIProviderProps {
 	children: ReactNode;
