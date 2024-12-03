@@ -32,6 +32,7 @@ export type OverlayConfig<TState = unknown> = {
 	position?: Position;
 };
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 type OverlayInstance<TState = any> = {
 	id: string;
 	component: React.ComponentType<OverlayProps<TState>>;
@@ -77,6 +78,7 @@ function areStatesEqual<TState>(prev: TState, next: TState): boolean {
 		return prevKeys.every(
 			(key) =>
 				nextKeys.includes(key) &&
+				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 				areStatesEqual((prev as any)[key], (next as any)[key])
 		);
 	}
@@ -155,6 +157,7 @@ export const OverlayProvider = ({
 		[createOverlay, closeOverlay, updateState]
 	);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const overlayList = useMemo(
 		() => Array.from(overlaysRef.current.values()),
 		[overlaysKey]

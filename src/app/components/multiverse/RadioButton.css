@@ -1,0 +1,3 @@
+.radio-item-root:has(button[data-state='checked']) {
+  border-color: theme('borderColor.selected');
+}

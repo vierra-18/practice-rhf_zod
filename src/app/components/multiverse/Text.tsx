@@ -1,4 +1,4 @@
-import { type ReactElement } from "react";
+import type { ReactElement } from "react";
 import * as Label from "@radix-ui/react-label";
 import { type VariantProps, cva } from "class-variance-authority";
 
@@ -92,6 +92,7 @@ const TextStyles = cva("", {
 type TextCVAProps = NonNullableProps<
 	Omit<VariantProps<typeof TextStyles>, "size">
 >;
+
 type BaseTextProps = TextCVAProps & {
 	children: string | ReactElement;
 	className?: string;
@@ -119,14 +120,14 @@ export type TextProps =
 	| TextWithoutLineHeight;
 
 function isTextLabel(props: any): props is LabelTextProps {
-	return props.as == "label" && "htmlFor" in props;
+	return props.as === "label" && "htmlFor" in props;
 }
 
 function hasLineHeight(props: any): props is TextWithLineHeight {
-	return true;
+	const validSizes = ["body", "body-large", "caption"];
+	return validSizes.includes(props.size);
 }
 
-// eslint-disable-next-line no-redeclare
 const Text = ({
 	as: Component = "span",
 	children,
