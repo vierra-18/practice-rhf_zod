@@ -1,165 +1,85 @@
-import type { ReactElement } from "react";
-import * as Label from "@radix-ui/react-label";
-import { type VariantProps, cva } from "class-variance-authority";
+import React from 'react';
+import { cn } from './../../lib/utilities';
 
-import { cn } from "./../../lib/utilities";
+const MAP_SIZE_CLASS = {
+  display: 'text-display',
+  title: 'text-title',
+  heading: 'text-heading',
+  subheading: 'text-subheading',
+  lead: 'text-lead',
+  'body-large': 'text-body-large',
+  body: 'text-body',
+  caption: 'text-caption',
+  overline: 'text-caption font-bold uppercase tracking-[0.5px]',
+} as const;
 
-type NonNullableProps<T> = {
-	[K in keyof T]: NonNullable<T[K]>;
-};
+const MAP_WEIGHT_CLASS = {
+  normal: 'font-normal',
+  medium: 'font-medium',
+  semibold: 'font-semibold',
+  bold: 'font-bold',
+} as const;
 
-const TextStyles = cva("", {
-	variants: {
-		size: {
-			display: "text-display",
-			title: "text-title",
-			heading: "text-heading",
-			subheading: "text-subheading",
-			lead: "text-lead",
-			"body-large": "text-body-large",
-			body: "text-body",
-			caption: "text-caption",
-			overline: "text-caption font-bold uppercase tracking-[0.5px]",
-		},
+const MAP_LINE_HEIGHT_CLASS = {
+  tight: 'leading-tight',
+  relaxed: 'leading-relaxed',
+  loose: 'leading-loose',
+} as const;
 
-		lineHeight: {
-			tight: "",
-			relaxed: "",
-			loose: "",
-		},
+const MAP_INTENT_CLASS = {
+  default: 'text',
+  inverse: 'text-inverse',
+  subtle: 'text-subtle',
+  placeholder: 'text-placeholder',
+  disabled: 'text-disabled',
+  brand: 'text-brand',
+  info: 'text-info',
+  success: 'text-success',
+  warning: 'text-warning',
+  danger: 'text-danger',
+  light: 'text-light',
+  dark: 'text-dark',
+} as const;
 
-		weight: {
-			normal: "font-normal",
-			medium: "font-medium",
-			semibold: "font-semibold",
-			bold: "font-bold",
-		},
-	},
+type TextProps<T extends React.ElementType = 'span'> = {
+  as?: T;
+  children: React.ReactNode;
+  className?: string;
+  intent?: keyof typeof MAP_INTENT_CLASS;
+  size?: keyof typeof MAP_SIZE_CLASS;
+  weight?: keyof typeof MAP_WEIGHT_CLASS;
+  lineHeight?: keyof typeof MAP_LINE_HEIGHT_CLASS;
+} & React.ComponentPropsWithoutRef<T> &
+  (T extends 'label' ? { htmlFor: string } : unknown);
 
-	defaultVariants: {
-		size: "body",
-	},
+function Text<T extends React.ElementType = 'span'>({
+  as,
+  children,
+  className,
+  intent = 'default',
+  size = 'body',
+  weight = 'normal',
+  lineHeight,
+  ...props
+}: TextProps<T>) {
+  const Component = as || 'span';
 
-	compoundVariants: [
-		{
-			size: "body",
-			lineHeight: "tight",
-			className: "text-body-tight",
-		},
-		{
-			size: "body",
-			lineHeight: "relaxed",
-			className: "text-body-relaxed",
-		},
-		{
-			size: "body",
-			lineHeight: "loose",
-			className: "text-body-loose",
-		},
-		{
-			size: "body-large",
-			lineHeight: "tight",
-			className: "text-body-large-tight",
-		},
-		{
-			size: "body-large",
-			lineHeight: "relaxed",
-			className: "text-body-large-relaxed",
-		},
-		{
-			size: "body-large",
-			lineHeight: "loose",
-			className: "text-body-large-loose",
-		},
-		{
-			size: "caption",
-			lineHeight: "tight",
-			className: "text-caption-tight",
-		},
-		{
-			size: "caption",
-			lineHeight: "relaxed",
-			className: "text-caption-relaxed",
-		},
-		{
-			size: "caption",
-			lineHeight: "loose",
-			className: "text-caption-loose",
-		},
-	],
-});
-
-type TextCVAProps = NonNullableProps<
-	Omit<VariantProps<typeof TextStyles>, "size">
->;
-
-type BaseTextProps = TextCVAProps & {
-	children: string | ReactElement;
-	className?: string;
-	weight?: "normal" | "medium" | "semibold" | "bold";
-	as?: "p" | "h1" | "h2" | "h3" | "h4" | "span";
-};
-
-type TextWithoutLineHeight = BaseTextProps & {
-	size?: "display" | "title" | "heading" | "subheading" | "lead" | "overline";
-};
-
-type TextWithLineHeight = BaseTextProps & {
-	size?: "body" | "body-large" | "caption";
-	lineHeight?: "tight" | "relaxed" | "loose";
-};
-
-type LabelTextProps = Omit<BaseTextProps, "as"> & {
-	as?: "label";
-	htmlFor: string;
-};
-
-export type TextProps =
-	| LabelTextProps
-	| TextWithLineHeight
-	| TextWithoutLineHeight;
-
-function isTextLabel(props: any): props is LabelTextProps {
-	return props.as === "label" && "htmlFor" in props;
+  return (
+    <Component
+      className={cn(
+        MAP_INTENT_CLASS[intent],
+        lineHeight && MAP_LINE_HEIGHT_CLASS[lineHeight],
+        MAP_SIZE_CLASS[size],
+        MAP_WEIGHT_CLASS[weight],
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </Component>
+  );
 }
 
-function hasLineHeight(props: any): props is TextWithLineHeight {
-	const validSizes = ["body", "body-large", "caption"];
-	return validSizes.includes(props.size);
-}
-
-const Text = ({
-	as: Component = "span",
-	children,
-	lineHeight,
-	className,
-	weight,
-	...props
-}: TextProps) => {
-	const styles = cn(
-		TextStyles({
-			size: hasLineHeight(props) ? props.size : "body",
-			weight,
-			lineHeight,
-		}),
-		className
-	);
-
-	if (isTextLabel(props)) {
-		return (
-			<Label.Root asChild htmlFor={props.htmlFor}>
-				<label className={styles}>{children}</label>
-			</Label.Root>
-		);
-	}
-
-	return (
-		<Component className={styles} {...props}>
-			{children}
-		</Component>
-	);
-};
-
-Text.displayName = "Text";
+Text.displayName = 'Text';
 
 export default Text;
